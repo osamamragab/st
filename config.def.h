@@ -113,7 +113,8 @@ unsigned int tabspaces = 8;
 
 /* bg opacity */
 float alpha = 0.8;
-float alphaUnfocused = 0.6;
+float alphaOffset = 0.0;
+float alphaUnfocus;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
@@ -228,7 +229,7 @@ ResourcePref resources[] = {
 		{ "cwscale",        FLOAT,   &cwscale },
 		{ "chscale",        FLOAT,   &chscale },
 		{ "alpha",          FLOAT,   &alpha },
-		{ "alphaUnfocused", FLOAT,   &alphaUnfocused },
+		{ "alphaOffset",    FLOAT,   &alphaOffset },
 };
 
 /*
@@ -266,6 +267,8 @@ static Shortcut shortcuts[] = {
 	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
 	{ ShiftMask,            XK_Page_Up,     kscrollup,      {.i = -1} },
 	{ ShiftMask,            XK_Page_Down,   kscrolldown,    {.i = -1} },
+	{ MODKEY,               XK_a,           changealpha,    {.f = +0.05} },
+	{ MODKEY|ShiftMask,     XK_A,           changealpha,    {.f = -0.05} },
 	{ TERMMOD,              XK_Escape,      keyboard_select,{.i =  0} },
 	{ TERMMOD,              XK_Return,      newterm,        {.i =  0} },
 };
