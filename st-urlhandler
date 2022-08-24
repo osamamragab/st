@@ -1,0 +1,37 @@
+#!/bin/sh
+
+if [ $# -eq 0 ] || [ "$1" = "-h" ]; then
+	printf "usage:\n\t-c: copy\n\t-o: xdg-open\n\t-h: help\n"
+	exit 1
+fi
+
+urls="$(
+	# remove linebreaks and mutt sidebars
+	sed "s/.*│//g" | tr -d "\n" |
+	# grep urls
+	grep -aEo "(((http|https|gopher|gemini|ftp|ftps|git)://|www\\.)[a-zA-Z0-9.]*[:;a-zA-Z0-9./+@$&%?$\#=_~-]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)" |
+	# ignore duplicates and reverse
+	uniq | tac |
+	# xdg-open will not detect url without http
+	sed "s/\(\.\|,\|;\|\!\\|\?\)$//;s/^www./http:\/\/www\./"
+)"
+
+[ -z "$urls" ] && exit 1
+
+while [ $# != 0 ]; do
+	case "$1" in
+		-c)
+			echo "$urls" | dmenu -i -p "copy url:" -l 10 | tr -d "\n" | xclip -sel clip
+			;;
+		-o)
+			sel="$(echo "$urls" | dmenu -i -p "open url:" -l 10)"
+			[ -z "$sel" ] && exit 1
+			setsid xdg-open "$sel" >/dev/null 2>&1 &
+			;;
+		*)
+			printf "invalid option: -%s\n" "$1"
+			exit 1
+			;;
+	esac
+	shift
+done
