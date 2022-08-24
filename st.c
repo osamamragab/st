@@ -1131,24 +1131,14 @@ newterm(const Arg* a)
 		die("fork failed: %s\n", strerror(errno));
 		break;
 	case 0:
-		switch (fork()) {
-		case -1:
-			die("fork failed: %s\n", strerror(errno));
-			break;
-		case 0:
-			chdir_by_pid(pid);
-			char *tabbed_win = getenv("XEMBED");
-			if (tabbed_win)
-				execlp("st", "./st", "-w", tabbed_win, NULL);
-			else
-				execlp("st", "./st", NULL);
-			exit(1);
-			break;
-		default:
-			exit(0);
-		}
-	default:
-		wait(NULL);
+		chdir_by_pid(pid);
+		char *tabbed_win = getenv("XEMBED");
+		if (tabbed_win)
+			execlp("/proc/self/exe", argv0, "-w", tabbed_win, NULL);
+		else
+			execlp("/proc/self/exe", argv0, NULL);
+		exit(1);
+		break;
 	}
 }
 
