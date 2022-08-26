@@ -2267,7 +2267,7 @@ config_init(void)
 {
 	char *resm;
 	XrmDatabase db;
-	ResourcePref *p;
+	const ResourcePref *p;
 
 	XrmInitialize();
 	resm = XResourceManagerString(xw.dpy);
