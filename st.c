@@ -2724,12 +2724,12 @@ tresize(int col, int row)
 
 	tmp = col;
 	if (!term.maxcol)
-		term.maxcol = col;
+		term.maxcol = term.col;
 	col = MAX(col, term.maxcol);
 	minrow = MIN(row, term.row);
 	mincol = MIN(col, term.maxcol);
 
-	if ( row < term.row  || col < term.col )
+	if (row < term.row  || col < term.col)
 		toggle_winmode(trt_kbdselect(XK_Escape, NULL, 0));
 
 	if (col < 1 || row < 1) {
