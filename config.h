@@ -223,7 +223,7 @@ static const ResourcePref resources[] = {
 		{ "background",     STRING,  &colorname[259] },
 		{ "foreground",     STRING,  &colorname[258] },
 		{ "cursorColor",    STRING,  &colorname[256] },
-		{ "selectionColor", STRING,  &colorname[257] },
+		{ "backgroundSel",  STRING,  &colorname[257] },
 		{ "termname",       STRING,  &termname },
 		{ "shell",          STRING,  &shell },
 		{ "minlatency",     INTEGER, &minlatency },
