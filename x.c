@@ -2056,9 +2056,9 @@ kpress(XEvent *ev)
 			return;
 	} else {
 		len = XLookupString(e, buf, sizeof buf, &ksym, NULL);
-	if ( IS_SET(MODE_KBDSELECT) ) {
-		if ( match(XK_NO_MOD, e->state) ||
-		     (XK_Shift_L | XK_Shift_R) & e->state )
+	}
+	if (IS_SET(MODE_KBDSELECT)) {
+		if (match(XK_NO_MOD, e->state) || (XK_Shift_L | XK_Shift_R) & e->state)
 			win.mode ^= trt_kbdselect(ksym, buf, len);
 		return;
 	}
