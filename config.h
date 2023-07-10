@@ -119,46 +119,46 @@ float alphaUnfocus;
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
 	/* 8 normal colors */
-	"black",
-	"red3",
-	"green3",
-	"yellow3",
-	"blue2",
-	"magenta3",
-	"cyan3",
-	"gray90",
+	"#3b4252",
+	"#bf616a",
+	"#a3be8c",
+	"#ebcb8b",
+	"#81a1c1",
+	"#b48ead",
+	"#88c0d0",
+	"#e5e9f0",
 
 	/* 8 bright colors */
-	"gray50",
-	"red",
-	"green",
-	"yellow",
-	"#5c5cff",
-	"magenta",
-	"cyan",
-	"white",
+	"#4c566a",
+	"#bf616a",
+	"#a3be8c",
+	"#ebcb8b",
+	"#81a1c1",
+	"#b48ead",
+	"#8fbcbb",
+	"#eceff4",
 
 	[255] = 0,
 
 	/* more colors can be added after 255 to use with DefaultXX */
-	"#cccccc",
-	"#2e3440",
-	"gray90", /* default foreground colour */
-	"black", /* default background colour */
+	"#e5e5e5", // cs
+	"#000000", // rcs
+	"#cccccc", // fg
+	"#2e3440", // bg
 };
 
 
 /*
  * Default colors (colorname index)
- * foreground, background, cursor, reverse cursor
+ * foreground, background, cursor, reverse cursor, selection
  */
 unsigned int defaultfg = 258;
 unsigned int defaultbg = 259;
 unsigned int defaultcs = 256;
-static unsigned int defaultrcs = 257;
+unsigned int defaultrcs = 257;
 unsigned int background = 259;
+unsigned int selectionfg = 256;
 unsigned int selectionbg = 257;
-unsigned int selectionfg = 7;
 /* If 0 use selectionfg as foreground in order to have a uniform foreground-color */
 /* Else if 1 keep original foreground-color of each cell => more colors :) */
 static int ignoreselfg = 1;
@@ -220,9 +220,10 @@ static const ResourcePref resources[] = {
 		{ "color13",        STRING,  &colorname[13] },
 		{ "color14",        STRING,  &colorname[14] },
 		{ "color15",        STRING,  &colorname[15] },
-		{ "background",     STRING,  &colorname[259] },
 		{ "foreground",     STRING,  &colorname[258] },
+		{ "background",     STRING,  &colorname[259] },
 		{ "cursorColor",    STRING,  &colorname[256] },
+		{ "foregroundSel",  STRING,  &colorname[256] },
 		{ "backgroundSel",  STRING,  &colorname[257] },
 		{ "termname",       STRING,  &termname },
 		{ "shell",          STRING,  &shell },
