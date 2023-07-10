@@ -2041,8 +2041,8 @@ kpress(XEvent *ev)
 {
 	XKeyEvent *e = &ev->xkey;
 	KeySym ksym = NoSymbol;
-	char buf[64], *customkey;
-	int len;
+	char *buf = NULL, *customkey;
+	int len = 0, cap = 64, nalloc = 2;
 	Rune c;
 	Status status;
 	Shortcut *bp;
@@ -2050,35 +2050,44 @@ kpress(XEvent *ev)
 	if (IS_SET(MODE_KBDLOCK))
 		return;
 
+	buf = xmalloc(cap * sizeof(char));
 	if (xw.ime.xic) {
-		len = XmbLookupString(xw.ime.xic, e, buf, sizeof buf, &ksym, &status);
-		if (status == XBufferOverflow)
-			return;
+		for (; nalloc > 0; nalloc--) {
+			len = XmbLookupString(xw.ime.xic, e, buf, cap, &ksym, &status);
+			if (status != XBufferOverflow)
+				break;
+			cap = len;
+			buf = xrealloc(buf, cap*sizeof(char));
+		}
+		if (nalloc == 0)
+			goto cleanup;
 	} else {
-		len = XLookupString(e, buf, sizeof buf, &ksym, NULL);
+		len = XLookupString(e, buf, cap, &ksym, NULL);
 	}
+
 	if (IS_SET(MODE_KBDSELECT)) {
 		if (match(XK_NO_MOD, e->state) || (XK_Shift_L | XK_Shift_R) & e->state)
 			win.mode ^= trt_kbdselect(ksym, buf, len);
-		return;
+		goto cleanup;
 	}
+
 	/* 1. shortcuts */
 	for (bp = shortcuts; bp < shortcuts + LEN(shortcuts); bp++) {
 		if (ksym == bp->keysym && match(bp->mod, e->state)) {
 			bp->func(&(bp->arg));
-			return;
+			goto cleanup;
 		}
 	}
 
 	/* 2. custom keys from config.h */
 	if ((customkey = kmap(ksym, e->state))) {
 		ttywrite(customkey, strlen(customkey), 1);
-		return;
+		goto cleanup;
 	}
 
 	/* 3. composed string from input method */
 	if (len == 0)
-		return;
+		goto cleanup;
 	if (len == 1 && e->state & Mod1Mask) {
 		if (IS_SET(MODE_8BIT)) {
 			if (*buf < 0177) {
@@ -2091,7 +2100,12 @@ kpress(XEvent *ev)
 			len = 2;
 		}
 	}
-	ttywrite(buf, len, 1);
+	if (len <= cap)
+		ttywrite(buf, len, 1);
+
+cleanup:
+	if (buf)
+		free(buf);
 }
 
 void
