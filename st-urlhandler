@@ -9,7 +9,7 @@ urls="$(
 	# remove linebreaks and mutt sidebars
 	sed "s/.*│//g" | tr -d "\n" |
 	# grep urls
-	grep -aEo "(((http|https|gopher|gemini|ftp|ftps|git)://|www\\.)[a-zA-Z0-9.]*[:;a-zA-Z0-9./+@$&%?$\#=_~-]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)" |
+	grep -aoE "(((http|https|gopher|gemini|ftp|ftps|git)://|www\\.)[a-zA-Z0-9.]*[:;a-zA-Z0-9./+@$&%?$\#=_~-]*)|((magnet:\\?xt=urn:btih:)[a-zA-Z0-9]*)" |
 	# ignore duplicates and reverse
 	uniq | tac |
 	# xdg-open will not detect url without http
@@ -24,12 +24,11 @@ for arg in "$@"; do
 			echo "$urls" | dmenu -i -p "copy url:" -l 10 | tr -d "\n" | xclip -sel clip
 			;;
 		-o)
-			sel="$(echo "$urls" | dmenu -i -p "open url:" -l 10)"
-			[ -z "$sel" ] && exit 1
-			setsid xdg-open "$sel" >/dev/null 2>&1 &
+			sel="$(echo "$urls" | dmenu -i -p "open url:" -l 10)" &&
+				setsid xdg-open "$sel" >/dev/null 2>&1 &
 			;;
 		*)
-			echo "invalid option: $arg" >&2
+			echo "invalid command: $arg" >&2
 			exit 1
 			;;
 	esac
