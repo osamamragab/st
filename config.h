@@ -6,12 +6,6 @@
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
 static char *font = "IBM Plex Mono:pixelsize=18:antialias=true:autohint=true:weight=bold";
-/* Spare fonts */
-static char *font2[] = {
-	"Amiri:pixelsize=17.7:antialias=true:autohint=true",
-	"NotoColorEmoji:pixelsize=10:antialias=true:autohint=true",
-};
-
 static int borderpx = 2;
 
 /*
