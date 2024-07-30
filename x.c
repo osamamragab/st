@@ -2157,13 +2157,9 @@ run(void)
 	}
 }
 
-int
+void
 resource_load(XrmDatabase db, char *name, enum resource_type rtype, void *dst)
 {
-	char **sdst = dst;
-	int *idst = dst;
-	float *fdst = dst;
-
 	char fullname[256];
 	char fullclass[256];
 	char *type;
@@ -2177,11 +2173,15 @@ resource_load(XrmDatabase db, char *name, enum resource_type rtype, void *dst)
 
 	XrmGetResource(db, fullname, fullclass, &type, &ret);
 	if (ret.addr == NULL || strncmp("String", type, 64))
-		return 1;
+		return;
+
+	char **sdst = dst;
+	int *idst = dst;
+	float *fdst = dst;
 
 	switch (rtype) {
 	case STRING:
-		*sdst = ret.addr;
+		*sdst = strdup(ret.addr);
 		break;
 	case INTEGER:
 		*idst = strtoul(ret.addr, NULL, 10);
@@ -2190,7 +2190,6 @@ resource_load(XrmDatabase db, char *name, enum resource_type rtype, void *dst)
 		*fdst = strtof(ret.addr, NULL);
 		break;
 	}
-	return 0;
 }
 
 void
@@ -2200,6 +2199,7 @@ load_xresources(void)
 	XrmDatabase db;
 	const ResourcePref *p;
 
+	XrmInitialize();
 	resm = XResourceManagerString(xw.dpy);
 	if (!resm)
 		return;
@@ -2207,6 +2207,7 @@ load_xresources(void)
 	db = XrmGetStringDatabase(resm);
 	for (p = resources; p < resources + LEN(resources); p++)
 		resource_load(db, p->name, p->type, p->dst);
+	XrmDestroyDatabase(db);
 }
 
 void
@@ -2286,7 +2287,6 @@ run:
 	if (!(xw.dpy = XOpenDisplay(NULL)))
 		die("Can't open display\n");
 
-	XrmInitialize();
 	load_xresources();
 	cols = MAX(cols, 1);
 	rows = MAX(rows, 1);
