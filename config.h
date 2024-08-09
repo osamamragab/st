@@ -6,7 +6,7 @@
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
 static int borderpx = 2;
-static char *font = "monospace:pixelsize=18:antialias=true:autohint=true:weight=bold";
+static char *font = "monospace:pixelsize=18:antialias=true:autohint=true:weight=semibold";
 static char *font2[] = { "NotoColorEmoji:pixelsize=16:antialias=true:autohint=true" };
 
 /*
